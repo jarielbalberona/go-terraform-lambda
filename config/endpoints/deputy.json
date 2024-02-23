@@ -1,0 +1,7 @@
+{
+    "base_url": "https://saltandsun.as.deputy.com",
+    "endpoints": {
+        "supervise_company_settings": "/api/v1/supervise/company/%s/settings",
+        "my_timesheets": "/api/v1/my/timesheets"
+    }
+}
