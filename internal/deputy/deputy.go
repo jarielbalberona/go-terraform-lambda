@@ -4,20 +4,31 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	utilsAWSS3 "silk-datalake-lambda-go/internal/utils/aws/s3"
 	"silk-datalake-lambda-go/internal/utils/http/endpoint"
 )
 
-func GetMyTimesheet() string {
+type CustomError struct {
+	Message string
+}
+
+// Error returns the error message.
+func (e *CustomError) Error() string {
+	return e.Message
+}
+
+func GetMyTimesheet() error {
 	body, err := DeputyAPIRequest("my_timesheets")
 
 	if err != nil {
 		msg := fmt.Sprintf("Error reading response body: %v", err)
-		log.Println(msg)
-		return msg
+		err := &CustomError{
+			Message: msg,
+		}
+
+		return err
 	}
 
 	// Define a struct to hold the JSON data
@@ -28,23 +39,27 @@ func GetMyTimesheet() string {
 	err = json.Unmarshal(body, &deputyData)
 	if err != nil {
 		msg := fmt.Sprintf("Error unmarshalling JSON: %v", err)
-		log.Println(msg)
-		return msg
+		err := &CustomError{
+			Message: msg,
+		}
+		return err
 	}
 
 	// Marshal the struct back into JSON bytes
 	jsonBytes, err := json.Marshal(deputyData)
 	if err != nil {
 		msg := fmt.Sprintf("Error marshalling JSON: %v", err)
-		log.Println(msg)
+		err := &CustomError{
+			Message: msg,
+		}
 
-		return msg
+		return err
 	}
 
 	key := "timesheet/2024/02/21/1.json"
-	SaveToS3(jsonBytes, key)
+	utilsAWSS3.PutToS3(key, jsonBytes)
 
-	return "Yeeep"
+	return nil
 }
 
 func DeputyAPIRequest(path string) ([]byte, error) {
@@ -69,19 +84,4 @@ func DeputyAPIRequest(path string) ([]byte, error) {
 	body, err := io.ReadAll(resp.Body)
 
 	return body, err
-}
-
-func SaveToS3(jsonBytes []byte, key string) error {
-	bucket := os.Getenv("AWS_S3_BUCKET")
-
-	err := utilsAWSS3.UploadToS3(bucket, key, jsonBytes)
-	if err != nil {
-		log.Println(err)
-		return err
-	}
-
-	msg := "Data uploaded to S3 successfully!"
-	log.Println(msg)
-
-	return nil
 }

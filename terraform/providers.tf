@@ -27,3 +27,5 @@ default_tags {
     }
   }
 }
+
+data "aws_region" "current" {}
