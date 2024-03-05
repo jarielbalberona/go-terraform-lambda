@@ -30,7 +30,7 @@ variable "project" {
 
 variable "s3_bucket_name" {
   type    = string
-  default = "aws-glue-silk-datalake"
+  default = "aws-glue-silk-datalake-system"
 }
 
 

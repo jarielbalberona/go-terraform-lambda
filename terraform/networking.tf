@@ -1,25 +1,41 @@
 resource "aws_vpc" "silk_dl_vpc" {
-  cidr_block = "10.10.0.0/16"
+  cidr_block = "10.20.0.0/16"
   tags = {
     Name = "${var.project}-vpc"
   }
 }
 
-resource "aws_subnet" "silk_dl_public_subnet" {
+resource "aws_subnet" "silk_dl_public_subnet_1" {
   vpc_id            = aws_vpc.silk_dl_vpc.id
-  cidr_block        = "10.10.1.0/24"
+  cidr_block        = "10.20.0.0/20"
   availability_zone = "ap-southeast-2a"
   tags = {
-    Name = "${var.project}-public-subnet"
+    Name = "${var.project}-public-subnet-1"
+  }
+}
+resource "aws_subnet" "silk_dl_public_subnet_2" {
+  vpc_id            = aws_vpc.silk_dl_vpc.id
+  cidr_block        = "10.20.16.0/20"
+  availability_zone = "ap-southeast-2b"
+  tags = {
+    Name = "${var.project}-public-subnet-2"
   }
 }
 
-resource "aws_subnet" "silk_dl_private_subnet" {
+resource "aws_subnet" "silk_dl_private_subnet_1" {
   vpc_id            = aws_vpc.silk_dl_vpc.id
-  cidr_block        = "10.10.2.0/24"
+  cidr_block        = "10.20.32.0/20"
   availability_zone = "ap-southeast-2a"
   tags = {
-    Name = "${var.project}-private-subnet"
+    Name = "${var.project}-private-subnet-1"
+  }
+}
+resource "aws_subnet" "silk_dl_private_subnet_2" {
+  vpc_id            = aws_vpc.silk_dl_vpc.id
+  cidr_block        = "10.20.64.0/20"
+  availability_zone = "ap-southeast-2b"
+  tags = {
+    Name = "${var.project}-private-subnet-2"
   }
 }
 
@@ -43,21 +59,48 @@ resource "aws_route_table" "silk_dl_public_route_table" {
   }
 }
 
-resource "aws_route_table_association" "silk_dl_public_subnet_association" {
-  subnet_id      = aws_subnet.silk_dl_public_subnet.id
+resource "aws_route_table" "silk_dl_private_route_table" {
+  vpc_id = aws_vpc.silk_dl_vpc.id
+  tags = {
+    Name = "${var.project}-private-route-table"
+  }
+}
+
+resource "aws_route" "silk_dl_s3_route" {
+  route_table_id            = aws_route_table.silk_dl_private_route_table.id
+  destination_cidr_block    = "0.0.0.0/0"
+  gateway_id                = aws_nat_gateway.silk_dl_nat_gateway.id
+}
+
+resource "aws_route_table_association" "silk_dl_public_subnet_association_1" {
+  subnet_id      = aws_subnet.silk_dl_public_subnet_1.id
   route_table_id = aws_route_table.silk_dl_public_route_table.id
+}
+
+resource "aws_route_table_association" "silk_dl_private_subnet_association_1" {
+  subnet_id      = aws_subnet.silk_dl_private_subnet_1.id
+  route_table_id = aws_route_table.silk_dl_private_route_table.id
+}
+
+resource "aws_route_table_association" "silk_dl_public_subnet_association_2" {
+  subnet_id      = aws_subnet.silk_dl_public_subnet_2.id
+  route_table_id = aws_route_table.silk_dl_public_route_table.id
+}
+
+resource "aws_route_table_association" "silk_dl_private_subnet_association_2" {
+  subnet_id      = aws_subnet.silk_dl_private_subnet_2.id
+  route_table_id = aws_route_table.silk_dl_private_route_table.id
 }
 
 resource "aws_nat_gateway" "silk_dl_nat_gateway" {
   allocation_id = aws_eip.silk_dl_eip.id
-  subnet_id     = aws_subnet.silk_dl_public_subnet.id
+  subnet_id     = aws_subnet.silk_dl_public_subnet_2.id
   tags = {
     Name = "${var.project}-nat-gateway"
   }
 }
 
 resource "aws_eip" "silk_dl_eip" {
-  vpc = true
   tags = {
     Name = "${var.project}-eip"
   }
@@ -72,7 +115,7 @@ resource "aws_security_group" "silk_dl_ec2_security_group" {
     from_port   = 0
     to_port     = 65535
     protocol    = "tcp"
-    cidr_blocks = ["10.10.0.0/16"]
+    cidr_blocks = ["10.20.0.0/20"]
   }
 
   egress {
