@@ -2,6 +2,11 @@
     "base_url": "https://saltandsun.as.deputy.com",
     "endpoints": {
         "supervise_company_settings": "/api/v1/supervise/company/%s/settings",
-        "my_timesheets": "/api/v1/my/timesheets"
+        "my_timesheets": "/api/v1/my/timesheets",
+        "get_pay_rates_awards_library": "/api/v1/payroll/listAwardsLibrary",
+        "get_all_employee_details": "/api/v1/supervise/employee",
+        "get_company_locations": "/api/v1/resource/Company",
+        "get_company_workplaces": "/api/v1/supervise/company/simple",
+        "get_operational_department_units": "/api/v1/resource/OperationalUnit/"
     }
 }

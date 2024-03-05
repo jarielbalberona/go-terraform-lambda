@@ -44,9 +44,9 @@ func FetchTodo() string {
 		return msg
 	}
 
-	key := "todos/1.json"
+	key := "todos/test.json"
 
-	err = utilsAWSS3.PutToS3(key, jsonBytes)
+	err = utilsAWSS3.PutToS3("raw", key, jsonBytes)
 	if err != nil {
 		fmt.Println(err)
 		return err.Error()

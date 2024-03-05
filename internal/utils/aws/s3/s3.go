@@ -12,7 +12,7 @@ import (
 )
 
 // UploadToS3 uploads data to an S3 bucket using the provided AWS session and bucket name
-func PutToS3(objectKey string, data []byte) error {
+func PutToS3(category string, objectKey string, data []byte) error {
 	// Create an S3 service client
 	svc := s3.New(utilsAWSSession.AwsSession)
 
@@ -20,7 +20,7 @@ func PutToS3(objectKey string, data []byte) error {
 	_, err := svc.PutObject(&s3.PutObjectInput{
 		Body:   bytes.NewReader(data),
 		Bucket: aws.String(os.Getenv("AWS_S3_BUCKET")),
-		Key:    aws.String(objectKey),
+		Key:    aws.String(category + "/" + objectKey),
 	})
 	if err != nil {
 		return fmt.Errorf("error uploading to S3: %v", err)

@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"silk-datalake-lambda-go/internal/deputy"
-	"silk-datalake-lambda-go/internal/jsonplaceholder"
 	"silk-datalake-lambda-go/internal/utils"
 
 	"github.com/aws/aws-lambda-go/lambda"
@@ -18,14 +17,22 @@ func handler() (string, error) {
 		log.Fatalf("Can't load env file. Err: %s", err)
 	}
 
-	randomString := utils.RandomString(10)
-	log.Println("Start " + randomString)
-	deputy.GetMyTimesheet()
-	jsonplaceholder.FetchTodo()
+	log.Println("Start " + utils.RandomString(10))
+
+	errors := deputy.AllDeputyAPIRequests()
+	if len(errors) > 0 {
+		log.Println("Errors encountered:")
+		for _, err := range errors {
+			log.Println("- ", err)
+		}
+	} else {
+		log.Println("All requests completed successfully.")
+	}
 
 	return "Finished λ!", nil
 }
 
 func main() {
+	// handler()
 	lambda.Start(handler)
 }

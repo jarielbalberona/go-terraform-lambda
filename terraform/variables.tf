@@ -28,4 +28,9 @@ variable "project" {
   default = "silk-datalake"
 }
 
+variable "s3_bucket_name" {
+  type    = string
+  default = "aws-glue-silk-datalake"
+}
+
 
