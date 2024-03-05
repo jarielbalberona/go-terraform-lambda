@@ -9,7 +9,7 @@ terraform {
   backend "s3" {
     bucket         = "silk-datalake-terraform-state"
     key            = "terraform.tfstate"
-    region         = "ap-southeast-1"
+    region         = "ap-southeast-2"
     encrypt        = true
   }
 }

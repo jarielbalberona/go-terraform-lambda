@@ -12,7 +12,7 @@ var AwsSession *session.Session
 func init() {
 	region := os.Getenv("AWS_REGION")
 	if region == "" {
-		region = "ap-southeast-1"
+		region = "ap-southeast-2"
 	}
 	AwsSession = session.Must(session.NewSession(&aws.Config{
 		Region: aws.String(region),

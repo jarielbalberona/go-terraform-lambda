@@ -31,7 +31,7 @@ resource "aws_iam_user_policy" "datalake_events_policy" {
       {
         Effect = "Allow",
         "Action": "*",
-        Resource = "arn:aws:events:ap-southeast-1:486564619398:rule/silk-datalake-lambda-function-daily-trigger"
+        Resource = "arn:aws:events:ap-southeast-2:486564619398:rule/silk-datalake-lambda-function-daily-trigger"
       }
     ]
   })
