@@ -199,7 +199,7 @@ resource "aws_security_group" "silk_dl_bastion_sg" {
 resource "aws_vpc_endpoint" "silk_dl_s3_endpoint" {
   vpc_id = aws_vpc.silk_dl_vpc.id
   service_name = "com.amazonaws.ap-southeast-2.s3"
-  route_table_ids = [aws_route_table.silk_dl_private_route_table.id] # Assuming you have a private route table
+  route_table_ids = [aws_route_table.silk_dl_private_route_table.id]
   tags = {
     Name = "silk-dl-s3-endpoint"
   }

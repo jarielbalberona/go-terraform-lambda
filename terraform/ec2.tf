@@ -26,6 +26,7 @@ resource "aws_instance" "silk_dl_bastion_host" {
               sudo sysctl -w net.ipv4.ip_forward=1
               sudo yum install iptables -y
               sudo iptables -t nat -A PREROUTING -p tcp --dport 5439 -j DNAT --to-destination ${aws_redshift_cluster.silk_dl_redshift_private.endpoint}
+              ${aws_redshift_cluster.silk_dl_redshift_private.dns_name}
               sudo iptables -t nat -A POSTROUTING -j MASQUERADE
               EOF
 
